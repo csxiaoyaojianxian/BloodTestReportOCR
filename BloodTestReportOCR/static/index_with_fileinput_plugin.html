@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BloodTestOCR</title>
+    <!-- Jquey load frist-->
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js" type="text/javascript"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <!-- bootstrap.js below is needed if you wish to zoom and view file content 
+     in a larger detailed modal dialog -->
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+    <link href="http://cdn.bootcss.com/bootstrap-fileinput/4.3.5/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css"
+    />
+    <!-- the main fileinput plugin file -->
+    <script src="http://cdn.bootcss.com/bootstrap-fileinput/4.3.5/js/fileinput.js"></script>
+    <!-- optionally if you need a theme like font awesome theme you can include 
+    it as mentioned below -->
+    <script src="http://cdn.bootcss.com/bootstrap-fileinput/4.3.5/themes/fa/theme.min.js"></script>
+    <!-- optionally if you need translation for your language then include 
+    locale file as mentioned below -->
+    <script src="http://cdn.bootcss.com/bootstrap-fileinput/4.3.1/js/fileinput_locale_LANG.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap-fileinput/4.3.1/js/fileinput_locale_zh.min.js"></script>
+    <!-- Vue.js mvvm -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar navbar-default">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">BloodTestOCR Demo</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <input id="report-upload" name="imagefile" type="file" multiple class="file-loading" />
+    </div>
+
+<div class="container">
+    <hr class="soften" />
+</div>
+
+<div id="filtered-image" class="container">
+
+</div>
+
+<div class="container">
+    <hr class="soften" />
+</div>
+<div id="report" class="container">
+    <button type="button" v-on:click="showReport()" class="btn btn-primary btn-lg btn-block">生成报告</button>
+    <div id="report-table" style="display:none;">
+        <div style="width:50%;float:left;">
+            <table id= "table_left" class="table table-inverse table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th> </th>
+                    <th>检测项目</th>
+                    <th>结果</th>
+                    <th>参考范围</th>
+                    <th>单位</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="item in report_items_left">
+                    <td>{{ item.count }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>
+                        <input type="text" v-model="item.value" class="form-control" placeholder="检测值" />
+                    </td>
+                    <td>{{ item.range }}</td>
+                    <td>{{ item.unit }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="width:50%;float:right;">
+            <table id= "table_right" class="table table-inverse table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th> </th>
+                    <th>检测项目</th>
+                    <th>结果</th>
+                    <th>参考范围</th>
+                    <th>单位</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="item in report_items_right">
+                    <td>{{ item.count }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>
+                        <input type="text" v-model="item.value" class="form-control" placeholder="检测值" />
+                    </td>
+                    <td>{{ item.range }}</td>
+                    <td>{{ item.unit }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+    <br>
+    <button type="button" v-on:click="test()" class="btn btn-primary btn-lg btn-block">predict</button>
+</div>
+    <script>
+    
+
+    $("#report-upload").fileinput({
+        uploadUrl: "upload", // server upload action
+        uploadAsync: true,
+        maxFileCount: 1,
+        autoReplace: true,
+        initialPreviewShowDelete: false,
+        showUploadedThumbs: false,
+        browseLabel: "浏览",
+        removeLabel: "删除",
+        uploadLabel: "上传",
+        dropZoneTitle: "选择你血常规检验报告单上传或拖拽到此...",
+        allowedFileExtensions: ['jpg', 'gif', 'png'],
+        fileActionSettings: {showUpload: false, showRemove: true}
+    });
+    $("#report-upload").on('fileuploaded', function(event, data){
+        //alert(data.response.templates);
+        if(data.response){
+            var result = data.response;
+            if(result.error == 1)
+            {
+                alert("图片不合格！");
+            }else
+            {
+                alert("Success！");
+                $("#filtered-image").empty().append(result.templates);
+            }
+        }
+    });
+    $('#report-upload').on('fileuploaderror', function(event, data, msg) {
+        var form = data.form, files = data.files, extra = data.extra,
+            response = data.response, reader = data.reader;
+        console.log('File upload error');
+        console.log(form);
+        console.log(files);
+        console.log(extra.toString());
+        //console.log(response);
+       // console.log(reader);
+        // get message
+        alert(msg);
+    });
+    $('#report-upload').on('fileclear', function(event) {
+        console.log("fileclear");
+        $("#filtered-report").remove();
+    });
+    $('#report-upload').on('fileerror', function(event, data, msg) {
+        console.log(data.id);
+        console.log(data.index);
+        console.log(data.files);
+        // get message
+        alert(msg);
+    });
+
+    
+    var report = new Vue({
+        el: '#report',
+        data: {
+            report_items_left: new Array(),
+            report_items_right: new Array(),
+        },
+        methods: {
+            showReport: function(event) {
+
+                url = $("#filtered-report").attr("src");
+                if (url == null) {
+                    alert("请上传报告");
+                    return;
+                }
+
+                url = 'report/' + url.split('/')[2];
+                console.log(url);
+                /*
+                 $.get(url,function(data) {
+                 console.log(data);
+                 console.log(data['bloodtest']);
+                 for (var i = 0; i < data['bloodtest'].length; i++) {
+                 this.report_items_left.push({
+                 name: data.bloodtest[i].name,
+                 alias: data.bloodtest[i].alias,
+                 value: data.bloodtest[i].value,
+                 range: data.bloodtest[i].range,
+                 unit: data.boodtest[i].unit
+                 });
+                 }
+                 });
+                 */
+                $.ajax({
+                    url: url,
+                    success: function(data) {
+                        console.log("response before JSON.parse:\n" + data);
+                        // data是string，必须转化为json对象,第一次parse将不标准的string转换为JSON标准格式的string，第二次parse将标准格式的string转换为JSON对象
+                        var json_str = JSON.parse(data);
+                        var json_data = JSON.parse(json_str);
+                        console.log("response of json_str:\n" + json_str);
+                        console.log("response of json_data:\n" + json_data);
+                        console.log("data.date\n"+json_data["date"]);
+                        console.log(json_data.bloodtest);
+
+                        //先清空表格内容
+                        $("#table_left  tr:not(:first)").empty();
+                        $("#table_right  tr:not(:first)").empty();
+
+                        for (var i = 0; i < json_data["bloodtest"].length; i++) {
+                            if(i<13){
+                                report.report_items_left.push({
+                                    count: i+1,
+                                    name: json_data.bloodtest[i]["name"],
+                                    alias: json_data.bloodtest[i].alias,
+                                    value: json_data.bloodtest[i].value,
+                                    range: json_data.bloodtest[i].range,
+                                    unit: json_data.bloodtest[i].unit
+                                });
+                            }
+
+                            else {
+                                report.report_items_right.push({
+                                    count: i+1,
+                                    name: json_data.bloodtest[i]["name"],
+                                    alias: json_data.bloodtest[i].alias,
+                                    value: json_data.bloodtest[i].value,
+                                    range: json_data.bloodtest[i].range,
+                                    unit: json_data.bloodtest[i].unit
+                                });
+                            }
+
+                        }
+
+                    }
+                });
+
+                $("#report-table").show();
+            },
+
+
+            test: function(event) {
+
+                data = [];
+                for(var i=0;i<13;i++)
+                    data[i] = Number(this.report_items_left[i].value);
+                for(var i=0;i<9;i++)
+                    data[13+i] = Number(this.report_items_right[i].value);
+
+                var data = {
+                    data: JSON.stringify(({
+                        "value":data
+                    }))
+                };
+
+                url = $("#filtered-report").attr("src");
+                if (url == null) {
+                    alert("请上传报告");
+                    return;
+                }
+                url = 'predict/' + url.split('/')[2];
+
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: data,
+                    success: function(data) {
+                        var obj = JSON.parse(data)
+                        if(obj.sex == 1)
+                            var sexsex = "男";
+                        else
+                            var sexsex = "女"
+                        alert("性别：" + sexsex + "\n年龄：" + obj.age);
+
+
+                    }
+                })
+            }
+
+        }
+    });
+    
+    </script>
+</body>
+
+</html>

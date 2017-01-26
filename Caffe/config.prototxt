@@ -1,0 +1,28 @@
+test_iter: 50               #测试的批次
+test_interval: 10000        #每10000次迭代后测试一次
+base_lr: 0.01               #基础学习率
+display: 10000              #每10000次迭代显示一次数据
+max_iter: 500000            #最大迭代次数
+
+lr_policy: "inv"            #学习率变化公式
+#    - fixed: always return base_lr.
+#    - step: return base_lr * gamma ^ (floor(iter / step))
+#    - exp: return base_lr * gamma ^ iter
+
+#    - inv: return base_lr * (1 + gamma * iter) ^ (- power)
+#    - sigmoid: the effective learning rate follows a sigmod decay
+#      return base_lr ( 1/(1 + exp(-gamma * (iter - stepsize))))
+
+
+#    - multistep: similar to step but it allows non uniform steps defined by
+#      stepvalue
+#    - poly: the effective learning rate follows a polynomial decay, to be
+#      zero by the max_iter. return base_lr (1 - iter/max_iter) ^ (power)
+
+gamma: 0.0001               #学习率变化参数
+power: 0.75                 #指数参数
+momentum: 0.9               #学习的参数
+weight_decay: 0.0005        #后向传播的权重比例
+solver_mode: CPU            #运行模式为cpu模式
+net: "lenet_train.prototxt" #训练网络
+stepsize: 100000            #每100000次迭代减少学习率

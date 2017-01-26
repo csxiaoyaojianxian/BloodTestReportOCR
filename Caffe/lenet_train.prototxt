@@ -1,0 +1,100 @@
+name: "LeNet"
+layer {
+  name: "mnist"
+  type: "Data"               #type 定义层次类型
+  top: "data"                #输入数据来自一些’bottom’ blobs, 输出一些’top’ blobs
+  top: "label"
+  include {
+    phase: TRAIN             #指明训练网络
+  }
+  transform_param {          #数据的预处理，一般图像设置为该值，1/255,本项目中用不到。
+    #scale: 0.00390625
+  }
+  data_param {               #数据来源，批处理大小，和LMDB数据格式
+    source: "train_data_lmdb"
+    batch_size: 1
+    backend: LMDB
+  }
+}
+layer {
+  name: "mnist"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST             #两个放在一起代表训练时采用的train和test网络用的同一个网络结构
+  }
+  transform_param {         #数据的预处理
+    #scale: 0.00390625
+  }
+  data_param {
+    source: "test_data_lmdb"
+    batch_size: 100
+    backend: LMDB
+  }
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"             #内积层又叫全连接层，输入当做一个一维向量，产生的输出也是以向量的形式输出，
+  bottom: "data"
+  top: "ip1"
+  param {                         #层的权值和偏置相关参数
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {           #全连接层节点数设置，或者说滤波器数目（必须设置）
+    num_output: 300
+    weight_filler {
+      type: "xavier"              #滤波器类型
+    }
+    bias_filler {                 #偏执类型，默认值
+      type: "constant"
+    }
+  }
+}
+layer {                           #激励层：常见激励函数有,relu:max(x, 0)
+  name: "relu1"                   #       sigmod,TanH,AbsVal 等等
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "accuracy"        #test 网络输出准确率
+  type: "Accuracy"
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"   #SoftmaxWithLoss（广义线性回归分析损失层）
+  bottom: "ip2"
+  bottom: "label"
+  top: "loss"
+}

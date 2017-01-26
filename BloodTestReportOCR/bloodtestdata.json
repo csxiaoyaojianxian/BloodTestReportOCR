@@ -1,0 +1,33 @@
+{
+  "_id": "bbca5d6a-2156-41c4-89da-0329e8c99a4f",
+  "originPicture": "bbca5d6a-2156-41c4-89da-0329e8c99a4f",
+  "date": "2016-09-21",
+  "profile": {
+    "gender": "Man",
+    "age": 30
+  },
+  "bloodtest": [
+    {"name":  "白细胞记数",      "alias": "WBC", "value":  0, "range":  "4-10",     "unit": "10E9/L"},
+    {"name":  "中性粒细胞计数",  "alias": "GRA", "value":  0, "range":  "1.8-6.4",  "unit": "10E9/L"},
+    {"name":  "淋巴细胞计数",    "alias": "LYM", "value":  0, "range":  "1-3.3",    "unit": "10E9/L"},
+    {"name":  "单核细胞计数",    "alias": "MONO","value":  0, "range":  "0.2~1",    "unit": "10E9/L"},
+    {"name":  "嗜酸性粒细胞记数","alias": "EO",  "value":  0, "range":  "0-0.5",    "unit": "10E9/L"},
+    {"name":  "嗜碱性粒细胞记数","alias": "BASO","value":  0, "range":  "0.02-0.1", "unit": "%"     },
+    {"name":  "中性粒细胞百分比","alias": "GRA%","value":  0, "range":  "40-75",    "unit": "%"     },
+    {"name":  "淋巴细胞百分比",  "alias": "LYM%","value":  0, "range":  "18-40",    "unit": "%"     },
+    {"name":  "单核细胞百分比",  "alias": "MONO%","value":  0,"range":  "3.5-10",   "unit": "%"     },
+    {"name":  "嗜酸性粒细胞百分比","alias": "EO%",  "value":  0, "range":  "0-0.5", "unit": "%"     },
+    {"name":  "嗜碱性粒细胞百分比","alias": "BASO%","value":  0, "range":  "0-1.5", "unit": "%"     },
+    {"name":  "红细胞记数",      "alias": "RBC", "value":  0, "range":  "4-5.5",    "unit": "10E12/L"},
+    {"name":  "血红蛋白",        "alias": "HGB", "value":  0, "range":  "120-160",  "unit": "g/L"   },
+    {"name":  "红细胞压积",      "alias": "HCT", "value":  0, "range":  "42-49",    "unit": "L/L"   },
+    {"name":  "红细胞平均体积",  "alias": "MCV", "value":  0, "range":  "82-95",    "unit": "fL"    },
+    {"name":  "平均血红蛋白",    "alias": "MCH", "value":  0, "range":  "27-33",    "unit": "pg"    },
+    {"name":  "平均血红蛋白浓度","alias": "MCHC","value":  0, "range":  "320-360",  "unit": "g/L"   },
+    {"name":  "红细胞分布宽度",  "alias": "RDW%","value":  0, "range":  "10.6-15",  "unit": "%"     },
+    {"name":  "血小板记数",      "alias": "PLT", "value":  0, "range":  "100-300",  "unit": "10E9/L"},
+    {"name":  "血小板压积",      "alias": "PCT", "value":  0, "range":  "0.11-0.28","unit": "L/L"   },
+    {"name":  "血小板分布宽度",  "alias": "PDW%","value":  0, "range":  "15.1-18.1","unit": "%"     },
+    {"name":  "平均血小板体积",  "alias": "MPV", "value":  0, "range":  "6-14",     "unit": "fL"    }
+  ]
+}

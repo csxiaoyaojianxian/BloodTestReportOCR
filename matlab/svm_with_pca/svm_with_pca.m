@@ -1,0 +1,30 @@
+load('predict_input.mat');
+load('predict_output.mat');
+load('train_input.mat');
+load('train_output.mat');
+data=[train_input;predict_input];
+%因为需要对数据进行一些处理，我们把训练集和预测集合并
+sex=[train_output;predict_output];
+checkpoint=1600;
+%即利用前1600个数据训练，后面的数据进行预测
+std_data=zscore(data);
+%标准化
+[coeff,score,latent,tsguared,explained]=pca(data);
+%pca降维
+re_train=score(:,1:10);
+%选取影响最大的10个分量，因为它们pca累计方差95%
+trunc1_train=re_train(1:checkpoint,:);
+%即利用checkpoint前的数据训练
+trunc1_sex=sex(1:checkpoint,:);
+trunc2_train=re_train(checkpoint+1:end,:);
+trunc2_sex=sex(checkpoint+1:end,:);
+svmstruct=svmtrain(trunc1_train,trunc1_sex);
+group=svmclassify(svmstruct,trunc2_train);
+count=0
+%统计准确率
+for i=1:(size(data,1)-checkpoint)
+    if(group(i,1)==sex(i+checkpoint,1))
+        count=count+1;
+    end
+end
+count/(size(data,1)-checkpoint)
