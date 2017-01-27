@@ -13,6 +13,4 @@
 
 ## Links
 
-* [本项目常用的几个的git命令](https://coding.net/u/mengning/p/np2016/topic/218403)
-* [2016年秋-网络程序设计](http://teamtrac.ustcsz.edu.cn/wiki/NP2016)
-* [一些有趣的深度学习项目](https://coding.net/u/mengning/p/np2016/topic/209943)
+* [我的博客](http://www.csxiaoyao.com/blog/2017/01/01/ustc-np2016%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/)
